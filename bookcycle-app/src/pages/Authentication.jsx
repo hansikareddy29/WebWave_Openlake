@@ -1,38 +1,48 @@
-// src/pages/Authentication.jsx
 import React, { useEffect, useState } from "react";
-import { auth, provider } from "../firebase";
-import { signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
+import { supabase } from "../supabase";
+import { useNavigate } from "react-router-dom";
 
 function Authentication() {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
-  // Track the logged-in user in real time
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    // Check for an active session when the component mounts
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
     });
-    return () => unsubscribe();
-  }, []);
 
-  // Google sign-in
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        navigate('/'); // On successful login, redirect to the homepage
+      }
+    });
+
+    // Cleanup the subscription on unmount
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
   const handleGoogleLogin = async () => {
     try {
-      await signInWithPopup(auth, provider);
+      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+      if (error) throw error;
+      // Supabase handles the redirect, so no navigation here
     } catch (error) {
       console.error("Google Login Error:", error);
     }
   };
 
-  // Logout
   const handleLogout = async () => {
     try {
-      await signOut(auth);
-    } catch (error) {
+      await supabase.auth.signOut();
+      setUser(null); // Explicitly clear user state
+    } catch (error)      {
       console.error("Logout Error:", error);
     }
   };
 
-  // UI
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-xl shadow-md text-center w-80">
@@ -48,9 +58,9 @@ function Authentication() {
           </>
         ) : (
           <>
-            <h2 className="text-xl font-semibold mb-2">Welcome, {user.displayName}</h2>
+            <h2 className="text-xl font-semibold mb-2">Welcome, {user.user_metadata?.full_name || user.email}</h2>
             <img
-              src={user.photoURL}
+              src={user.user_metadata?.avatar_url}
               alt="Profile"
               className="w-16 h-16 rounded-full mx-auto mb-3"
             />
