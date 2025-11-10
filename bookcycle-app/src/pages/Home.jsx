@@ -1,172 +1,19 @@
-// // // src/pages/Home.jsx
-// // import React, { useState, useEffect, useCallback } from 'react';
-// // import { db } from '../firebase';
-// // import { ref, onValue } from 'firebase/database';
-// // import BookList from '../components/BookList';
-// // import FilterBar from '../components/FilterBar';
-
-// // const Home = () => {
-// //   const [books, setBooks] = useState([]);
-// //   const [filteredBooks, setFilteredBooks] = useState([]);
-// //   const [loading, setLoading] = useState(true);
-// //   const [filters, setFilters] = useState({
-// //     subject: '', condition: '', availability: '', location: ''
-// //   });
-
-// //   useEffect(() => {
-// //     const booksRef = ref(db, 'books');
-// //     const unsubscribe = onValue(booksRef, (snapshot) => {
-// //       const data = snapshot.val();
-// //       const loadedBooks = [];
-// //       for (const key in data) {
-// //         // Only show books that are not part of an active 'accepted' request
-// //         if (!data[key].isBorrowed) {
-// //           loadedBooks.push({ id: key, ...data[key] });
-// //         }
-// //       }
-// //       const sortedBooks = loadedBooks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-// //       setBooks(sortedBooks);
-// //       setLoading(false);
-// //     });
-// //     return () => unsubscribe();
-// //   }, []);
-
-// //   // FEATURE #8 & #2: Logic for Smart Search & Location Filter is here
-// //   const applyFilters = useCallback(() => {
-// //     let booksToFilter = [...books];
-// //     if (filters.subject) {
-// //       booksToFilter = booksToFilter.filter(b => b.subject.toLowerCase().includes(filters.subject.toLowerCase()));
-// //     }
-// //     if (filters.condition) {
-// //       booksToFilter = booksToFilter.filter(b => b.condition === filters.condition);
-// //     }
-// //     if (filters.availability) {
-// //       booksToFilter = booksToFilter.filter(b => b.availability === filters.availability);
-// //     }
-// //     if (filters.location) {
-// //       booksToFilter = booksToFilter.filter(b => b.college && b.college.toLowerCase().includes(filters.location.toLowerCase()));
-// //     }
-// //     setFilteredBooks(booksToFilter);
-// //   }, [books, filters]);
-
-// //   useEffect(() => {
-// //     applyFilters();
-// //   }, [filters, applyFilters]);
-
-// //   const handleFilterChange = (newFilters) => {
-// //     setFilters(newFilters);
-// //   };
-
-// //   return (
-// //     <div>
-// //       <div className="text-center mb-10">
-// //         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800">Share & Discover Textbooks</h1>
-// //         <p className="max-w-2xl mx-auto mt-4 text-lg text-gray-500">
-// //           Find affordable textbooks for your courses or give your old books a new life.
-// //         </p>
-// //       </div>
-// //       <FilterBar onFilterChange={handleFilterChange} />
-// //       <BookList books={filteredBooks} loading={loading} />
-// //     </div>
-// //   );
-// // };
-
-// // export default Home;
-// // src/pages/Home.jsx
-// import React, { useState, useEffect, useCallback } from 'react';
-// import { db } from '../firebase';
-// import { ref, onValue } from 'firebase/database';
-// import BookList from '../components/BookList';
-// import FilterBar from '../components/FilterBar';
-
-// const Home = ({ user }) => {  // ✅ Receive 'user' prop from App.js
-//   const [books, setBooks] = useState([]);
-//   const [filteredBooks, setFilteredBooks] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [filters, setFilters] = useState({
-//     subject: '', condition: '', availability: '', location: ''
-//   });
-
-//   useEffect(() => {
-//     const booksRef = ref(db, 'books');
-//     const unsubscribe = onValue(booksRef, (snapshot) => {
-//       const data = snapshot.val();
-//       const loadedBooks = [];
-//       for (const key in data) {
-//         // Only show books that are not part of an active 'accepted' request
-//         if (!data[key].isBorrowed) {
-//           loadedBooks.push({ id: key, ...data[key] });
-//         }
-//       }
-//       const sortedBooks = loadedBooks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-//       setBooks(sortedBooks);
-//       setLoading(false);
-//     });
-//     return () => unsubscribe();
-//   }, []);
-
-//   // Apply filters (subject, condition, availability, location)
-//   const applyFilters = useCallback(() => {
-//     let booksToFilter = [...books];
-//     if (filters.subject) {
-//       booksToFilter = booksToFilter.filter(b => b.subject?.toLowerCase().includes(filters.subject.toLowerCase()));
-//     }
-//     if (filters.condition) {
-//       booksToFilter = booksToFilter.filter(b => b.condition === filters.condition);
-//     }
-//     if (filters.availability) {
-//       booksToFilter = booksToFilter.filter(b => b.availability === filters.availability);
-//     }
-//     if (filters.location) {
-//       booksToFilter = booksToFilter.filter(b => b.college && b.college.toLowerCase().includes(filters.location.toLowerCase()));
-//     }
-//     setFilteredBooks(booksToFilter);
-//   }, [books, filters]);
-
-//   useEffect(() => {
-//     applyFilters();
-//   }, [filters, applyFilters]);
-
-//   const handleFilterChange = (newFilters) => {
-//     setFilters(newFilters);
-//   };
-
-//   return (
-//     <div>
-//       <div className="text-center mb-10">
-//         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800">Share & Discover Textbooks</h1>
-//         <p className="max-w-2xl mx-auto mt-4 text-lg text-gray-500">
-//           Find affordable textbooks for your courses or give your old books a new life.
-//         </p>
-//       </div>
-
-//       <FilterBar onFilterChange={handleFilterChange} />
-
-//       {/* ✅ Pass current user to BookList */}
-//       <BookList books={filteredBooks} loading={loading} currentUser={user} />
-//     </div>
-//   );
-// };
-
-// export default Home;
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../supabase'; // <-- IMPORT SUPABASE
+import { supabase } from '../supabase';
 import SearchBar from '../components/SearchBar';
 import BookList from '../components/BookList';
+import { getDistance } from 'geolib';
 
 const Home = () => {
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isLocating, setIsLocating] = useState(false);
 
   useEffect(() => {
     const fetchBooks = async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('books')
-        .select('*')
-        .order('created_at', { ascending: false });
-
+      const { data, error } = await supabase.from('books').select('*').order('created_at', { ascending: false });
       if (error) {
         console.error("Error fetching books:", error);
       } else {
@@ -193,15 +40,64 @@ const Home = () => {
     setFilteredBooks(results);
   };
 
+  // This function gets the user's location and sorts books by distance
+  const findBooksNearMe = () => {
+    setIsLocating(true);
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      setIsLocating(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+
+        const booksWithDistance = books.map(book => {
+          if (book.latitude && book.longitude) {
+            const distanceInMeters = getDistance(
+              { latitude, longitude },
+              { latitude: book.latitude, longitude: book.longitude }
+            );
+            return { ...book, distance: distanceInMeters / 1000 }; // Convert to km
+          }
+          return { ...book, distance: Infinity }; // Put books without a location at the end
+        });
+
+        // Sort the books array by the new 'distance' property
+        const sortedBooks = booksWithDistance.sort((a, b) => a.distance - b.distance);
+        
+        setFilteredBooks(sortedBooks);
+        setIsLocating(false);
+      },
+      (error) => {
+        console.error("Error getting user location:", error);
+        alert("Could not get your location. Please ensure you have enabled location services in your browser settings.");
+        setIsLocating(false);
+      }
+    );
+  };
+
   return (
     <div>
       <div className="text-center mb-10">
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800">Share & Discover Textbooks</h1>
         <p className="max-w-2xl mx-auto mt-4 text-lg text-gray-500">
-          Join a community of students sharing knowledge. Find affordable textbooks for your courses or give your old books a new life.
+          Find affordable textbooks for your courses or give your old books a new life.
         </p>
       </div>
-      <SearchBar onSearch={handleSearch} />
+      <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+        <div className="flex-grow max-w-2xl">
+            <SearchBar onSearch={handleSearch} />
+        </div>
+        <button 
+          onClick={findBooksNearMe}
+          disabled={isLocating}
+          className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-full hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+        >
+          {isLocating ? 'Finding...' : '📍 Find Books Near Me'}
+        </button>
+      </div>
       <BookList books={filteredBooks} loading={loading} />
     </div>
   );
