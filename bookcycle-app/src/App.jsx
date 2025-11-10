@@ -1,42 +1,30 @@
-// src/App.js
-import React, { useState, useEffect } from 'react';
+// src/App.jsx
+import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Authentication from "./pages/Authentication";
-
-
-import { auth, db } from './firebase'; 
-
-import { onAuthStateChanged } from 'firebase/auth';
+import useAuthListener from './hooks/useAuthListener';
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import AddBook from './pages/AddBook';
 import MyBooks from './pages/MyBooks';
-import Login from './pages/Login';
+import Authentication from './pages/Authentication';
+import Requests from './pages/Requests';
+import Chat from './pages/Chat';
+import Dashboard from './pages/Dashboard';
+import BookDetails from './pages/BookDetails';
 
 function App() {
-  console.log("Firebase connected. Auth:", auth, "DB:", db);
-
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
+  const { user, loading } = useAuthListener();
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center h-screen text-xl font-semibold">Loading BookCycle...</div>;
   }
 
-    const ProtectedRoute = ({ children }) => {
+  // A protected route component
+  const ProtectedRoute = ({ children }) => {
     if (!user) {
-      return <Navigate to="/login" />;
+      return <Navigate to="/auth" />;
     }
     return children;
   };
@@ -47,24 +35,17 @@ function App() {
       <main className="flex-grow container mx-auto px-4 py-8">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route 
-            path="/add-book" 
-            element={
-              <ProtectedRoute>
-                <AddBook user={user} />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/my-books" 
-            element={
-              <ProtectedRoute>
-                <MyBooks user={user} />
-              </ProtectedRoute>
-            } 
-          />
           <Route path="/auth" element={<Authentication />} />
+          <Route path="/book/:bookId" element={<BookDetails user={user} />} />
+          
+          <Route path="/add-book" element={<ProtectedRoute><AddBook user={user} /></ProtectedRoute>} />
+          <Route path="/my-books" element={<ProtectedRoute><MyBooks user={user} /></ProtectedRoute>} />
+          <Route path="/requests" element={<ProtectedRoute><Requests user={user} /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard user={user} /></ProtectedRoute>} />
+          <Route path="/chat/:chatId" element={<ProtectedRoute><Chat user={user} /></ProtectedRoute>} />
+
+          {/* Fallback Route */}
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
       <Footer />
