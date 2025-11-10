@@ -74,7 +74,7 @@ It promotes affordable learning, sustainability, and collaboration among student
 ---
 
 ## 🧩 Folder Structure
-
+```
 src/
 ├── components/
 │   ├── Navbar.jsx
@@ -99,8 +99,8 @@ src/
 │   ├── useAuthListener.js   
 │
 └── firebase.js
+```
 ---
-
 ## 🧠 Impact & Relevance
 
 - Promotes **resource sharing** and **cost savings** among students.
