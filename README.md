@@ -2,12 +2,6 @@
 
 *BookCycle* is a full-stack web platform for students to share, lend, and discover used textbooks within their local community, promoting sustainability and making education more accessible.
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-blue?style=for-the-badge&logo=vercel)](bookcycle-three.vercel.app/)
-
----
-
-![BookCycle Homepage Screenshot](c:\Users\gurra\OneDrive\Pictures\Screenshots\Screenshot 2025-11-11 052331.png)
-
 ## The Problem
 
 Many students buy expensive textbooks that are used for only one semester. Meanwhile, other students struggle to find affordable or available copies. This leads to:
