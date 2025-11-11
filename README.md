@@ -1,131 +1,50 @@
-# 📚 BookCycle – Share & Borrow Books Locally
+# BookCycle 📚
 
-**BookCycle** is a community-driven web app that empowers students to **share, lend, and borrow books** within their colleges or local areas.  
-It promotes affordable learning, sustainability, and collaboration among students — aligning perfectly with the WebWave 3.0 theme *“Code for Chhattisgarh (C4CG)”* by enhancing educational accessibility through technology.
+*BookCycle* is a full-stack web platform for students to share, lend, and discover used textbooks within their local community, promoting sustainability and making education more accessible.
 
----
-
-## 🚀 Features
-
-### 🔐 User Authentication
-- Secure login/signup using **Firebase Authentication** (Email & Google Sign-In).
-- User details are safely stored using Firebase’s built-in authentication services.
-
-### 📘 Book Management
-- Add and manage books you own — including title, author, subject, and condition.
-- Edit or remove listings anytime.
-- View your added books in the **“My Books”** section.
-
-### 🤝 Book Request & Borrow System
-- Students can send **borrow requests** for available books.
-- Book owners can **approve/reject** requests.
-- Once approved, the book status updates automatically to “Borrowed ✅”.
-
-### 📍 Location-Based Sharing
-- Search and borrow books from students **near your college or locality**.
-- Filter books based on the area or institution for hyper-local exchange.
-
-### 🕒 Due Date Reminders
-- When lending a book, owners can set a **return due date**.
-- Users receive friendly reminders when a book’s return date is near.
-
-### 🖼️ Book Cover Recognition (AI Auto-Fill)
-- Upload a book’s cover image.
-- The system auto-detects and fills details like title and author using an AI Vision API.
-
-### 💬 Real-Time Chat System
-- Borrowers and lenders can chat directly within the app.
-- Messages are updated live via **Firebase Realtime Database**.
-- Enables seamless communication for book pickup and return.
-
-### 🏷️ Book Condition Tracker
-- Add a condition label when listing a book:
-  - 🟢 New  
-  - 🟡 Good  
-  - 🔴 Used  
-- Promotes transparency and trust among users.
-
-### 🔍 Smart Search & Filters
-- Search books by name, subject, or author.
-- Filter by **college**, **availability**, **condition**, or **category**.
-
-### 📊 Activity Dashboard
-- Visual dashboard showing:
-  - Books added
-  - Books borrowed/lent
-  - Pending requests
-  - Reputation points
-- Encourages active participation through a gamified experience.
+[![Live Demo](https://img.shields.io/badge/Live-Demo-blue?style=for-the-badge&logo=vercel)](bookcycle-three.vercel.app/)
 
 ---
 
-## ⚙️ Tech Stack
+![BookCycle Homepage Screenshot](c:\Users\gurra\OneDrive\Pictures\Screenshots\Screenshot 2025-11-11 052331.png)
 
-| Category | Technology |
-|-----------|-------------|
-| Frontend | React.js, Tailwind CSS |
-| Backend | Firebase (Auth, Realtime Database, Storage) |
-| AI Integration | Google Vision / OpenAI API |
-| Hosting | Firebase Hosting |
-| Authentication | Email/Password, Google Sign-In using Firebase |
-| Database | Firebase Realtime Database |
-| Storage | Firebase Cloud Storage |
+## The Problem
 
----
+Many students buy expensive textbooks that are used for only one semester. Meanwhile, other students struggle to find affordable or available copies. This leads to:
 
-## 🧩 Folder Structure
-```
-src/
-├── components/
-│   ├── Navbar.jsx
-│   ├── Footer.jsx
-│   ├── BookCard.jsx        
-│   ├── RequestCard.jsx      
-│   ├── ChatBox.jsx          
-│   ├── FilterBar.jsx        
-│   └── DashboardStats.jsx   
-│
-├── pages/
-│   ├── Home.jsx
-│   ├── AddBook.jsx
-│   ├── MyBooks.jsx
-│   ├── Authentication.jsx
-│   ├── Requests.jsx         
-│   ├── Chat.jsx             
-│   ├── Dashboard.jsx        
-│   └── BookDetails.jsx      
-│
-├── hooks/
-│   ├── useAuthListener.js   
-│
-└── firebase.js
-```
----
-## 🧠 Impact & Relevance
+-   💸 *Unnecessary Spending:* Students spend a significant amount of money on books with a short lifespan.
+-   📚 *Wastage of Resources:* Perfectly good books gather dust on shelves or are thrown away.
+-   📉 *Reduced Access:* High costs can limit students' access to essential learning materials.
 
-- Promotes **resource sharing** and **cost savings** among students.
-- Encourages a **sustainable learning culture** by reducing waste.
-- Connects students within local communities for collaborative growth.
-- Directly aligns with **Code for Chhattisgarh** — addressing student accessibility and educational resource sharing.
+## The Solution
 
----
+BookCycle provides a centralized platform for students to:
 
-## 🧑‍💻 Team
+-   *List* their used textbooks for lending or giving away.
+-   *Search* for available books by title, subject, or college.
+-   *Find* books nearby based on their current location.
+-   *Request* to borrow books from other users.
+-   *Chat* directly with lenders to coordinate a handoff.
 
-**Project Name:** BookCycle  
-**Hackathon:** WebWave 3.0 (OpenLake IIT Bhilai)  
-**Theme:** *Code for Chhattisgarh – Empowering Students through Technology*  
-**Team Members:**  
-- Gurrala Hansika  
-- V.G.N. Harshitha  
+It promotes a community of sharing among students while supporting sustainability and making education more accessible.
 
+## ✨ Core Features
 
----
+| Feature                                | Description                                                                                                                                                                                            |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 🔐 *Secure User Authentication*      | Seamless sign-up/login with Email & Password or Google OAuth. User sessions are securely managed by Supabase Auth.                                                                                   |
+| 📖 *Comprehensive Book Management*   | Users can perform full CRUD operations: list new books with images, details, and condition; view all listings; and manage their own books on a dedicated "My Books" page.                               |
+| 📍 *Smart Location-Based Discovery* | Integrates the OpenCage Geocoding API to convert user-entered locations into coordinates. A "Find Near Me" feature allows users to sort books by proximity, with distances displayed on each card.          |
+| 🤝 *Formal Request & Lending System* | A structured workflow for borrowing books. Users can send requests, which lenders can then *Accept* (setting a due date), *Decline, or mark as **Returned*.                                       |
+| 📊 *Personalized User Dashboard*     | Provides users with an at-a-glance summary of their activity, including books listed, items borrowed, pending requests, completed swaps, and due date reminders.                                        |
+| 💬 *Real-time Chat*                  | Facilitates easy communication between borrowers and lenders to coordinate handoffs. Built with Supabase Realtime Subscriptions for instant messaging.                                                 |
+| 📱 *Responsive & Modern UI*          | A clean, mobile-first interface built with TailwindCSS ensures a seamless experience on any device, from phones to desktops.                                                                          |
 
-## 🏁 Conclusion
+## 🛠 Tech Stack
 
-BookCycle creates a collaborative, student-first environment where sharing knowledge becomes as simple as sharing a book. It combines modern web technologies with real-world student needs — building a platform that’s **sustainable, accessible, and impactful**.
-
-> “Knowledge grows when shared — and so do communities.”
-
----
+| Category          | Technology / Service                                       |
+| ----------------- | ---------------------------------------------------------- |
+| *Frontend*      | React.js, Vite, React Router, TailwindCSS                  |
+| *Backend (BaaS)| **Supabase* (PostgreSQL Database, Auth, Storage, Realtime)  |
+| *APIs & Services* | *OpenCage Geocoding API* (for location-to-coordinate conversion) |
+| *Deployment*    | Vercel                                                     |
