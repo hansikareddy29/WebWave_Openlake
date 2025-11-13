@@ -60,8 +60,10 @@ const BookDetails = ({ user }) => {
   if (!book) return <div className="text-center font-bold text-xl text-red-500">Book not found.</div>;
 
   const isOwner = user && user.id === book.lender_id;
- const mailSubject = `Regarding your book on BookCycle: ${book.title}`;
-  const mailtoLink = `mailto:${book.lender_email}?subject=${encodeURIComponent(mailSubject)}`;
+ const subject = encodeURIComponent(`Request for book: ${book.title}`);
+const body = encodeURIComponent(`Hi, I'm interested in borrowing "${book.title}".`);
+const mailtoLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${book.lender_email}&su=${subject}&body=${body}`;
+
 
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
