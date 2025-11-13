@@ -14,35 +14,26 @@ const BookDetails = ({ user }) => {
     const fetchBook = async () => {
       setLoading(true);
       try {
-        const { data, error } = await supabase
-          .from('books')
-          .select('*')
-          .eq('id', bookId)
-          .single(); 
-
+        const { data, error } = await supabase.from('books').select('*').eq('id', bookId).single();
         if (error) throw error;
-        
-        if (data) {
-          setBook(data);
-        }
+        if (data) setBook(data);
       } catch (err) {
         console.error("Error fetching book details:", err);
       } finally {
         setLoading(false);
       }
     };
-    const checkExistingRequest = async () => {
-        if (!user) return;
-        const { data, error } = await supabase
-            .from('requests')
-            .select('id')
-            .eq('book_id', bookId)
-            .eq('from_user_id', user.id)
-            .single();
 
+    const checkExistingRequest = async () => {
+      if (!user || !bookId) return;
+      try {
+        const { data } = await supabase.from('requests').select('id').eq('book_id', bookId).eq('from_user_id', user.id).maybeSingle();
         if (data) {
-            setRequestSent(true);
+          setRequestSent(true);
         }
+      } catch (error) {
+        console.error("Error checking for existing request:", error);
+      }
     };
 
     fetchBook();
@@ -58,42 +49,34 @@ const BookDetails = ({ user }) => {
         book_id: book.id,
         book_title: book.title,
         from_user_id: user.id,
-        from_user_name: user.email, 
+        from_user_name: user.email,
         to_user_id: book.lender_id,
         to_user_name: book.lender_email,
         status: 'pending'
       });
       if (error) throw error;
       setRequestSent(true);
-      alert('Request sent successfully!');
+      alert('Request sent successfully! You can now chat with the lender from the Requests page.');
     } catch (err) {
       console.error("Error sending request:", err);
       alert('Failed to send request.');
     }
   };
-  if (loading) {
-    return <div className="text-center font-semibold text-xl">Loading Book Details...</div>;
-  }
-  if (!book) {
-    return <div className="text-center font-bold text-xl text-red-500">Book not found.</div>;
-  }
+
+  if (loading) return <div className="text-center font-semibold text-xl">Loading Book Details...</div>;
+  if (!book) return <div className="text-center font-bold text-xl text-red-500">Book not found.</div>;
 
   const isOwner = user && user.id === book.lender_id;
+  const mailSubject = `Regarding your book on BookCycle: ${book.title}`;
+  const mailtoLink = `mailto:${book.lender_email}?subject=${encodeURIComponent(mailSubject)}`;
 
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
       <div className="grid md:grid-cols-2 gap-8">
-        
-        <img 
-          src={book.image_url || 'https://via.placeholder.com/400x500.png?text=No+Image'} 
-          alt={book.title} 
-          className="w-full h-auto object-cover rounded-lg shadow-md" 
-        />
-        
+        <img src={book.image_url || 'https://via.placeholder.com/400x500.png?text=No+Image'} alt={book.title} className="w-full h-auto object-cover rounded-lg shadow-md" />
         <div>
           <h1 className="text-3xl font-bold text-gray-900">{book.title}</h1>
           <p className="text-lg text-gray-600 mt-1">by {book.author}</p>
-          
           <div className="mt-4 space-y-2 text-gray-700">
             <p><span className="font-semibold">Subject:</span> {book.subject}</p>
             <p><span className="font-semibold">Location:</span> {book.college || 'N/A'}</p>
@@ -102,19 +85,34 @@ const BookDetails = ({ user }) => {
           </div>
           
           <div className="mt-6 space-y-3">
-            <button
-              onClick={handleRequest}
-              disabled={requestSent || isOwner || book.is_borrowed}
-              className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-            >
-              {isOwner ? "This is your book" : book.is_borrowed ? "Currently Borrowed" : requestSent ? 'Request Already Sent' : 'Request to Borrow'}
-            </button>
             {!isOwner && user && (
-              <ChatButton
-                currentUser={user}
-                otherUserId={book.lender_id}
-                otherUserName={book.lender_email}
-              />
+                <button
+                  onClick={handleRequest}
+                  disabled={requestSent || book.is_borrowed}
+                  className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                >
+                  {book.is_borrowed ? "Currently Borrowed" : requestSent ? 'Request Already Sent' : 'Request to Borrow'}
+                </button>
+            )}
+
+            {/* If you are the owner, you don't see any buttons */}
+            {isOwner && (
+                <div className="w-full bg-gray-200 text-gray-600 text-center py-3 rounded-lg font-semibold">This is your book</div>
+            )}
+            
+            {/* The Chat & Email buttons now appear AFTER a request is sent */}
+            {!isOwner && user && requestSent && (
+              <div className="border-t pt-4 mt-4 space-y-3">
+                 <p className="text-sm text-center text-gray-600">Your request has been sent. You can now contact the lender.</p>
+                 <ChatButton
+                   currentUser={user}
+                   otherUserId={book.lender_id}
+                   otherUserName={book.lender_email}
+                 />
+                 <a href={mailtoLink} className="w-full block text-center bg-gray-500 text-white py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
+                    Send a Follow-up Email
+                 </a>
+               </div>
             )}
           </div>
         </div>
