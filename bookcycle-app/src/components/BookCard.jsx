@@ -1,9 +1,10 @@
 import React from 'react';
-const subject = encodeURIComponent(`Request for book: ${book.title}`);
+
+const BookCard = ({ book }) => {
+    const subject = encodeURIComponent(`Request for book: ${book.title}`);
 const body = encodeURIComponent(`Hi, I'm interested in borrowing "${book.title}".`);
 const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${book.lender_email}&su=${subject}&body=${body}`;
 
-const BookCard = ({ book }) => {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-all duration-300 hover:shadow-xl flex flex-col">
       <img 
@@ -36,7 +37,7 @@ const BookCard = ({ book }) => {
   href={gmailLink}
   target="_blank"
   rel="noopener noreferrer"
-  className="text-blue-600 hover:underline"
+  className="w-full block text-center bg-green-600 text-white py-2.5 rounded-lg hover:bg-green-700 font-semibold transition-colors"
 >
   Contact Lender
 </a>

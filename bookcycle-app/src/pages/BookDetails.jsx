@@ -1,6 +1,3 @@
-// This is the complete and final version of BookDetails.jsx, fully migrated to Supabase.
-// It includes loading states and guard clauses to prevent rendering errors.
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
@@ -17,12 +14,11 @@ const BookDetails = ({ user }) => {
     const fetchBook = async () => {
       setLoading(true);
       try {
-        // Fetch the specific book from Supabase using its ID
         const { data, error } = await supabase
           .from('books')
           .select('*')
           .eq('id', bookId)
-          .single(); // .single() gets one record instead of an array
+          .single(); 
 
         if (error) throw error;
         
@@ -35,8 +31,6 @@ const BookDetails = ({ user }) => {
         setLoading(false);
       }
     };
-    
-    // Also check if a request has already been sent by this user for this book
     const checkExistingRequest = async () => {
         if (!user) return;
         const { data, error } = await supabase
@@ -64,7 +58,7 @@ const BookDetails = ({ user }) => {
         book_id: book.id,
         book_title: book.title,
         from_user_id: user.id,
-        from_user_name: user.email, // Or user.user_metadata.full_name if available
+        from_user_name: user.email, 
         to_user_id: book.lender_id,
         to_user_name: book.lender_email,
         status: 'pending'
@@ -77,9 +71,6 @@ const BookDetails = ({ user }) => {
       alert('Failed to send request.');
     }
   };
-
-  // ✅ --- ERROR FIX IS HERE ---
-  // These "guard clauses" are crucial. They run before the main JSX.
   if (loading) {
     return <div className="text-center font-semibold text-xl">Loading Book Details...</div>;
   }
@@ -92,14 +83,13 @@ const BookDetails = ({ user }) => {
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
       <div className="grid md:grid-cols-2 gap-8">
-        {/* --- Left Side: Image --- */}
+        
         <img 
           src={book.image_url || 'https://via.placeholder.com/400x500.png?text=No+Image'} 
           alt={book.title} 
           className="w-full h-auto object-cover rounded-lg shadow-md" 
         />
         
-        {/* --- Right Side: Details and Actions --- */}
         <div>
           <h1 className="text-3xl font-bold text-gray-900">{book.title}</h1>
           <p className="text-lg text-gray-600 mt-1">by {book.author}</p>
@@ -119,8 +109,6 @@ const BookDetails = ({ user }) => {
             >
               {isOwner ? "This is your book" : book.is_borrowed ? "Currently Borrowed" : requestSent ? 'Request Already Sent' : 'Request to Borrow'}
             </button>
-            
-            {/* The ChatButton will only appear if you are logged in AND you are not the owner */}
             {!isOwner && user && (
               <ChatButton
                 currentUser={user}
