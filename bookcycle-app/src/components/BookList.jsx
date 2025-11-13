@@ -1,8 +1,8 @@
 import React from 'react';
 import BookCard from './BookCard';
 
-// 1. Accept the new isOwnerView prop
-const BookList = ({ books, loading, currentUser, isOwnerView }) => { // <--- ADDED isOwnerView
+
+const BookList = ({ books, loading, currentUser, isOwnerView }) => { 
     
     if (loading) {
         return <div className="text-center p-10 text-xl text-gray-500">Loading books...</div>;
@@ -19,7 +19,7 @@ const BookList = ({ books, loading, currentUser, isOwnerView }) => { // <--- ADD
                     key={book.id} 
                     book={book} 
                     currentUser={currentUser} 
-                    isOwnerView={isOwnerView} // <--- 2. PASS IT DOWN HERE!
+                    isOwnerView={isOwnerView} 
                 />
             ))}
         </div>

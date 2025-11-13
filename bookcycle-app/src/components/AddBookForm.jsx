@@ -36,7 +36,7 @@ const AddBookForm = ({ user }) => {
         const filePath = `public/${user.id}/${Date.now()}-${image.name}`;
         
         const { error: uploadError } = await supabase.storage
-          .from('book-images') // This is the bucket name you created
+          .from('book-images') 
           .upload(filePath, image);
 
         if (uploadError) throw uploadError;
@@ -52,7 +52,7 @@ const AddBookForm = ({ user }) => {
         college,
         condition,
         availability,
-        image_url: bookImageUrl, // Supabase columns are often snake_case
+        image_url: bookImageUrl,
         lender_id: user.id,
         lender_email: user.email,
       });

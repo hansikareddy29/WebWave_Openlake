@@ -9,7 +9,7 @@ const AddBook = ({ user }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [subject, setSubject] = useState('');
-  const [college, setCollege] = useState(''); // This is the location string
+  const [college, setCollege] = useState(''); 
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [condition, setCondition] = useState('Good');
@@ -29,7 +29,6 @@ const AddBook = ({ user }) => {
     }
 
     try {
-      // FIX 1: The fetch URL must be a template literal (use backticks)
       const response = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(locationQuery)}&key=${OPENCAGE_API_KEY}&limit=1`);
       const data = await response.json();
 
@@ -60,7 +59,7 @@ const AddBook = ({ user }) => {
     try {
       let bookImageUrl = '';
       if (image) {
-        // FIX 2: The file path must be a template literal (use backticks)
+        
         const filePath = `public/${user.id}/${Date.now()}-${image.name}`;
         
         const { error: uploadError } = await supabase.storage.from('book-images').upload(filePath, image);

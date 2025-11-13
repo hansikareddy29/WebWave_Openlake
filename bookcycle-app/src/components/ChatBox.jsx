@@ -7,7 +7,7 @@ const ChatBox = ({ chatId, currentUser }) => {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    // 1. Fetch initial messages for the chat room
+    
     const fetchMessages = async () => {
       const { data, error } = await supabase
         .from('messages')
@@ -24,9 +24,9 @@ const ChatBox = ({ chatId, currentUser }) => {
 
     fetchMessages();
 
-    // 2. Set up a real-time subscription to listen for new messages
+    
     const subscription = supabase
-      // FIX 2: Correct template literal usage for channel name
+      
       .channel(`chat_${chatId}`) 
       .on(
         'postgres_changes',
@@ -34,7 +34,7 @@ const ChatBox = ({ chatId, currentUser }) => {
           event: 'INSERT', 
           schema: 'public', 
           table: 'messages', 
-          // FIX 3: Correct template literal usage for the filter string
+          
           filter: `chat_id=eq.${chatId}` 
         },
         (payload) => {
@@ -43,7 +43,7 @@ const ChatBox = ({ chatId, currentUser }) => {
       )
       .subscribe();
 
-    // 3. Cleanup the subscription when the component unmounts
+    
     return () => {
       supabase.removeChannel(subscription);
     };
@@ -76,9 +76,9 @@ const ChatBox = ({ chatId, currentUser }) => {
     <div className="flex flex-col h-[70vh] bg-white rounded-lg shadow-lg">
       <div className="flex-1 p-4 overflow-y-auto">
         {messages.map((msg, index) => (
-          // FIX 4a: Correct template literal usage for outer div
+          
           <div key={index} className={`flex mb-4 ${msg.sender_id === currentUser.id ? 'justify-end' : 'justify-start'}`}>
-            {/* FIX 4b: Correct template literal usage for inner div */}
+            
             <div className={`rounded-lg px-4 py-2 max-w-xs lg:max-w-md ${msg.sender_id === currentUser.id ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-800'}`}>
               <p className="text-sm font-bold mb-1">{msg.sender_id === currentUser.id ? 'You' : 'Lender'}</p>
               <p>{msg.text}</p>

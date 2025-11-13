@@ -9,23 +9,23 @@ const ChatButton = ({ currentUser, otherUserId, otherUserName }) => {
     if (!currentUser || !otherUserId) return;
 
     try {
-      // 1. Check if a chat already exists between these two users
+      
       const { data: existingChat, error: fetchError } = await supabase
         .from('chats')
         .select('id')
-        // FIX 1: Correct template literal usage inside .or()
+        
         .or(`and(user1_id.eq.${currentUser.id},user2_id.eq.${otherUserId}),and(user1_id.eq.${otherUserId},user2_id.eq.${currentUser.id})`)
         .single();
 
-      if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 means no rows found, which is fine
+      if (fetchError && fetchError.code !== 'PGRST116') { 
         throw fetchError;
       }
 
       if (existingChat) {
-        // If chat exists, navigate to it
+       
         navigate(`/chat/${existingChat.id}`); 
       } else {
-        // If chat doesn't exist, create a new one
+       
         const { data: newChat, error: insertError } = await supabase
           .from('chats')
           .insert({ user1_id: currentUser.id, user2_id: otherUserId })

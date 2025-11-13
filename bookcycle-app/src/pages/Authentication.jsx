@@ -7,12 +7,12 @@ function Authentication() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for an active session when the component mounts
+    
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
     });
 
-    // Listen for auth state changes
+    
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -20,7 +20,7 @@ function Authentication() {
       }
     });
 
-    // Cleanup the subscription on unmount
+    
     return () => subscription.unsubscribe();
   }, [navigate]);
 
@@ -37,7 +37,7 @@ function Authentication() {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      setUser(null); // Explicitly clear user state
+      setUser(null); 
     } catch (error)      {
       console.error("Logout Error:", error);
     }

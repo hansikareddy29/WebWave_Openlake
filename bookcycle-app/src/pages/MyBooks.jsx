@@ -39,8 +39,6 @@ const MyBooks = ({ user }) => {
   return (
     <div>
       <h1 className="text-3xl font-bold text-gray-800 text-center mb-8">My Listed Books</h1>
-      
-      {/* The BookList component will now receive the correct data */}
       <BookList books={myBooks} loading={loading} />
     </div>
   );

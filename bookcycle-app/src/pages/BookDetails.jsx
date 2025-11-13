@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
-import ChatButton from '../components/ChatButton'; // <-- IMPORT THE NEW COMPONENT
+import ChatButton from '../components/ChatButton'; 
 
 const BookDetails = ({ user }) => {
   const { bookId } = useParams();

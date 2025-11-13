@@ -18,7 +18,7 @@ const BookCard = ({ book }) => {
           </span>
         </div>
 
-        {/* This is the new part that displays the distance */}
+        
         {book.distance !== undefined && book.distance !== Infinity && (
             <p className="mt-3 text-sm font-bold text-blue-600">
                 📍 Approx. {book.distance.toFixed(1)} km away
@@ -27,7 +27,7 @@ const BookCard = ({ book }) => {
 
         <p className="text-sm text-gray-500 mt-3">{book.college}</p>
         
-        {/* This pushes the button to the bottom of the card */}
+        
         <div className="mt-auto pt-4">
           <a 
                 
