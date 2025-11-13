@@ -26,9 +26,9 @@ const Navbar = ({ user }) => {
             
             {user ? (
               <>
-                
-                <Link to="/profile" className="text-gray-600 hover:text-green-600 font-medium transition-colors">Profile</Link>
+                <Link to="/my-books" className="text-gray-600 hover:text-green-600 font-medium transition-colors">My Books</Link>
                 <Link to="/add-book" className="text-gray-600 hover:text-green-600 font-medium transition-colors">Add Book</Link>
+                <Link to="/profile" className="text-gray-600 hover:text-green-600 font-medium transition-colors">Profile</Link>
                 <button 
                   onClick={handleLogout} 
                   className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-semibold transition-colors text-sm"
