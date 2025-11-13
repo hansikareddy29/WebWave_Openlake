@@ -28,7 +28,9 @@ const BookDetails = ({ user }) => {
       if (!user || !bookId) return;
       try {
         const { data } = await supabase.from('requests').select('id').eq('book_id', bookId).eq('from_user_id', user.id).maybeSingle();
-        if (data) setRequestSent(true);
+        if (data) {
+          setRequestSent(true);
+        }
       } catch (error) {
         console.error("Error checking for existing request:", error);
       }
@@ -41,10 +43,15 @@ const BookDetails = ({ user }) => {
   const handleRequest = async () => {
     if (!user) { navigate('/login'); return; }
     if (user.id === book.lender_id) { alert("You cannot request your own book."); return; }
+    
     try {
       const { error } = await supabase.from('requests').insert({
-        book_id: book.id, book_title: book.title, from_user_id: user.id,
-        from_user_name: user.email, to_user_id: book.lender_id, to_user_name: book.lender_email,
+        book_id: book.id,
+        book_title: book.title,
+        from_user_id: user.id,
+        from_user_name: user.user_metadata?.full_name || user.email,
+        to_user_id: book.lender_id,
+        to_user_name: book.lender_name || book.lender_email,
         status: 'pending'
       });
       if (error) throw error;
@@ -56,14 +63,15 @@ const BookDetails = ({ user }) => {
     }
   };
 
+ 
   if (loading) return <div className="text-center font-semibold text-xl">Loading Book Details...</div>;
   if (!book) return <div className="text-center font-bold text-xl text-red-500">Book not found.</div>;
 
   const isOwner = user && user.id === book.lender_id;
- const subject = encodeURIComponent(`Request for book: ${book.title}`);
-const body = encodeURIComponent(`Hi, I'm interested in borrowing "${book.title}".`);
-const mailtoLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${book.lender_email}&su=${subject}&body=${body}`;
-
+  
+  
+  const mailSubject = `Regarding your book on BookCycle: ${book.title}`;
+  const mailtoLink = `mailto:${book.lender_email}?subject=${encodeURIComponent(mailSubject)}`;
 
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
@@ -76,25 +84,31 @@ const mailtoLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${book.lender_
             <p><span className="font-semibold">Subject:</span> {book.subject}</p>
             <p><span className="font-semibold">Location:</span> {book.college || 'N/A'}</p>
             <p><span className="font-semibold">Condition:</span> {book.condition}</p>
-            <p><span className="font-semibold">Lender:</span> {book.lender_email}</p>
+            <p><span className="font-semibold">Lender:</span> {book.lender_name || book.lender_email}</p>
           </div>
           
           <div className="mt-6 space-y-3">
+           
             {isOwner && (
                 <div className="w-full bg-gray-200 text-gray-600 text-center py-3 rounded-lg font-semibold">This is your book listing</div>
             )}
             
+            
             {!isOwner && user && (
                 <>
-                    <button 
-                        onClick={handleRequest} 
-                        disabled={requestSent || book.is_borrowed} 
-                        className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                    <button
+                      onClick={handleRequest}
+                      disabled={requestSent || book.is_borrowed}
+                      className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                     >
-                        {book.is_borrowed ? "Currently Borrowed" : requestSent ? 'Request Already Sent' : 'Request to Borrow'}
+                      {book.is_borrowed ? "Currently Borrowed" : requestSent ? 'Request Already Sent' : 'Request to Borrow'}
                     </button>
-                   
-                    <ChatButton currentUser={user} otherUserId={book.lender_id} otherUserName={book.lender_email} />
+
+                    <ChatButton
+                      currentUser={user}
+                      otherUserId={book.lender_id}
+                      otherUserName={book.lender_name || book.lender_email}
+                    />
                     
                     <a href={mailtoLink} target="_blank" rel="noopener noreferrer" className="w-full block text-center bg-gray-500 text-white py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
                         Contact Lender via Email
@@ -102,10 +116,11 @@ const mailtoLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${book.lender_
                 </>
             )}
 
+            
             {!user && (
-                <div className="w-full bg-gray-100 text-gray-700 text-center p-4 rounded-lg">
-                    <p>Please <a href="/login" className="text-green-600 font-bold hover:underline">log in</a> to request or chat about this book.</p>
-                </div>
+                 <div className="w-full bg-gray-100 text-gray-700 text-center p-4 rounded-lg">
+                    <p>Please <Link to="/login" className="text-green-600 font-bold hover:underline">log in</Link> to request or chat about this book.</p>
+                 </div>
             )}
           </div>
         </div>
