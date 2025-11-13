@@ -19,12 +19,7 @@ const Home = ({ user }) => {
         return;
       }
       setLoading(true);
-      const { data, error } = await supabase
-        .from('books')
-        .select('*')
-        .neq('lender_id', user.id)
-        .order('created_at', { ascending: false });
-
+      const { data, error } = await supabase.from('books').select('*').neq('lender_id', user.id).order('created_at', { ascending: false });
       if (error) {
         console.error("Error fetching books:", error);
       } else {
@@ -94,11 +89,6 @@ const Home = ({ user }) => {
             <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
                 <div className="w-full flex-grow">
                     <SearchBar onSearch={handleSearch} />
-                </div>
-                <div className="flex items-center gap-4">
-                    <div className="hidden md:block border-l h-6 border-gray-300"></div>
-                    <span className="hidden md:block text-gray-500 text-sm">OR</span>
-                    <div className="hidden md:block border-l h-6 border-gray-300"></div>
                 </div>
                 <div className="w-full md:w-auto">
                     <button 

@@ -19,7 +19,7 @@ const BookCard = ({ book, context, onDelete }) => {
     <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-all duration-300 hover:shadow-xl flex flex-col relative">
       {book.is_borrowed && (
         <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-10">
-          <span className="text-white text-lg font-bold border-2 border-red-500 bg-red-500 px-4 py-2 rounded-lg">Borrowed</span>
+          <span className="bg-red-600 text-white text-lg font-bold px-4 py-2 rounded-lg shadow-lg">Borrowed</span>
         </div>
       )}
       <Link to={`/book/${book.id}`} className="block">
