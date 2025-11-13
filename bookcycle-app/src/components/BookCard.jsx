@@ -1,4 +1,7 @@
 import React from 'react';
+const subject = encodeURIComponent(`Request for book: ${book.title}`);
+const body = encodeURIComponent(`Hi, I'm interested in borrowing "${book.title}".`);
+const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${book.lender_email}&su=${subject}&body=${body}`;
 
 const BookCard = ({ book }) => {
   return (
@@ -29,13 +32,14 @@ const BookCard = ({ book }) => {
         
         
         <div className="mt-auto pt-4">
-          <a 
-                
-            href={`mailto:${book.lender_email}?subject=Request for book: ${book.title}`}
-            className="w-full block text-center bg-green-600 text-white py-2.5 rounded-lg hover:bg-green-700 font-semibold transition-colors"
-          >
-            Contact Lender
-          </a>
+          <a
+  href={gmailLink}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-blue-600 hover:underline"
+>
+  Contact Lender
+</a>
         </div>
       </div>
     </div>
@@ -43,3 +47,4 @@ const BookCard = ({ book }) => {
 };
 
 export default BookCard;
+
