@@ -60,7 +60,7 @@ const BookDetails = ({ user }) => {
   if (!book) return <div className="text-center font-bold text-xl text-red-500">Book not found.</div>;
 
   const isOwner = user && user.id === book.lender_id;
-  const mailSubject = `Regarding your book on BookCycle: ${book.title}`;
+ const mailSubject = `Regarding your book on BookCycle: ${book.title}`;
   const mailtoLink = `mailto:${book.lender_email}?subject=${encodeURIComponent(mailSubject)}`;
 
   return (
@@ -76,30 +76,34 @@ const BookDetails = ({ user }) => {
             <p><span className="font-semibold">Condition:</span> {book.condition}</p>
             <p><span className="font-semibold">Lender:</span> {book.lender_email}</p>
           </div>
+          
           <div className="mt-6 space-y-3">
             {isOwner && (
                 <div className="w-full bg-gray-200 text-gray-600 text-center py-3 rounded-lg font-semibold">This is your book listing</div>
             )}
+            
             {!isOwner && user && (
                 <>
-                    <button onClick={handleRequest} disabled={requestSent || book.is_borrowed} className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors">
-                      {book.is_borrowed ? "Currently Borrowed" : requestSent ? 'Request Already Sent' : 'Request to Borrow'}
+                    <button 
+                        onClick={handleRequest} 
+                        disabled={requestSent || book.is_borrowed} 
+                        className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                    >
+                        {book.is_borrowed ? "Currently Borrowed" : requestSent ? 'Request Already Sent' : 'Request to Borrow'}
                     </button>
-                    {/* Only show Chat/Email if a request has been sent */}
-                    {requestSent && (
-                        <>
-                            <ChatButton currentUser={user} otherUserId={book.lender_id} otherUserName={book.lender_email} />
-                            <a href={mailtoLink} className="w-full block text-center bg-gray-500 text-white py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
-                                Contact Lender via Email
-                            </a>
-                        </>
-                    )}
+                   
+                    <ChatButton currentUser={user} otherUserId={book.lender_id} otherUserName={book.lender_email} />
+                    
+                    <a href={mailtoLink} target="_blank" rel="noopener noreferrer" className="w-full block text-center bg-gray-500 text-white py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
+                        Contact Lender via Email
+                    </a>
                 </>
             )}
+
             {!user && (
-                  <div className="w-full bg-gray-100 text-gray-700 text-center p-4 rounded-lg">
-                      <p>Please <a href="/login" className="text-green-600 font-bold hover:underline">log in</a> to request or chat about this book.</p>
-                  </div>
+                <div className="w-full bg-gray-100 text-gray-700 text-center p-4 rounded-lg">
+                    <p>Please <a href="/login" className="text-green-600 font-bold hover:underline">log in</a> to request or chat about this book.</p>
+                </div>
             )}
           </div>
         </div>
