@@ -19,11 +19,10 @@ const Home = ({ user }) => {
         return;
       }
       setLoading(true);
-
       const { data, error } = await supabase
         .from('books')
         .select('*')
-        .neq('lender_id', user.id) 
+        .neq('lender_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) {
