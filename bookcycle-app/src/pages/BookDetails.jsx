@@ -9,37 +9,39 @@ const BookDetails = ({ user }) => {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [requestSent, setRequestSent] = useState(false);
-  const [borrowDetails, setBorrowDetails] = useState(null);
+
+  const getDisplayName = (nameOrEmail) => {
+    if (!nameOrEmail) return 'Lender';
+    if (nameOrEmail.includes('@')) {
+      return nameOrEmail.split('@')[0];
+    }
+    return nameOrEmail;
+  };
 
   useEffect(() => {
-    const fetchBookAndRequest = async () => {
+    const fetchBook = async () => {
       setLoading(true);
       try {
-        const { data: bookData, error: bookError } = await supabase.from('books').select('*').eq('id', bookId).single();
-        if (bookError) throw bookError;
-        if (bookData) {
-            setBook(bookData);
-            if (bookData.is_borrowed) {
-                const { data: requestData } = await supabase.from('requests').select('due_date').eq('book_id', bookData.id).eq('status', 'accepted').single();
-                if (requestData) {
-                    const dueDate = new Date(requestData.due_date);
-                    const now = new Date();
-                    const daysRemaining = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
-                    setBorrowDetails({ dueDate, daysRemaining });
-                }
-            }
-        }
-        if (user) {
-            const { data: existingRequest } = await supabase.from('requests').select('id').eq('book_id', bookId).eq('from_user_id', user.id).maybeSingle();
-            if (existingRequest) setRequestSent(true);
-        }
+        const { data, error } = await supabase.from('books').select('*').eq('id', bookId).single();
+        if (error) throw error;
+        if (data) setBook(data);
       } catch (err) {
         console.error("Error fetching book details:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchBookAndRequest();
+    const checkExistingRequest = async () => {
+      if (!user || !bookId) return;
+      try {
+        const { data } = await supabase.from('requests').select('id').eq('book_id', bookId).eq('from_user_id', user.id).maybeSingle();
+        if (data) setRequestSent(true);
+      } catch (error) {
+        console.error("Error checking for existing request:", error);
+      }
+    };
+    fetchBook();
+    checkExistingRequest();
   }, [bookId, user]);
 
   const handleRequest = async () => {
@@ -58,10 +60,11 @@ const BookDetails = ({ user }) => {
     }
   };
 
-  if (loading) return <div className="text-center font-semibold text-xl">Loading...</div>;
+  if (loading) return <div className="text-center font-semibold text-xl">Loading Book Details...</div>;
   if (!book) return <div className="text-center font-bold text-xl text-red-500">Book not found.</div>;
 
   const isOwner = user && user.id === book.lender_id;
+  const lenderDisplayName = getDisplayName(book.lender_name || book.lender_email);
 
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
@@ -74,29 +77,19 @@ const BookDetails = ({ user }) => {
             <p><span className="font-semibold">Subject:</span> {book.subject}</p>
             <p><span className="font-semibold">Location:</span> {book.college || 'N/A'}</p>
             <p><span className="font-semibold">Condition:</span> {book.condition}</p>
-            <p><span className="font-semibold">Lender:</span> {book.lender_name || book.lender_email}</p>
+            <p><span className="font-semibold">Lender:</span> {lenderDisplayName}</p>
           </div>
           <div className="mt-6 space-y-3">
             {isOwner && (<div className="w-full bg-gray-200 text-gray-600 text-center py-3 rounded-lg font-semibold">This is your book listing</div>)}
             {!isOwner && user && (
                 <>
-                    {book.is_borrowed && borrowDetails ? (
-                        <div className="w-full bg-red-100 text-red-700 text-center py-3 rounded-lg font-semibold">
-                            Borrowed. Available in approx. {borrowDetails.daysRemaining} days.
-                        </div>
-                    ) : (
-                        <button onClick={handleRequest} disabled={requestSent} className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors">
-                            {requestSent ? 'Request Already Sent' : 'Request to Borrow'}
-                        </button>
-                    )}
-                    <ChatButton currentUser={user} otherUserId={book.lender_id} otherUserName={book.lender_name || book.lender_email} />
+                    <button onClick={handleRequest} disabled={requestSent || book.is_borrowed} className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors">
+                      {book.is_borrowed ? "Currently Borrowed" : requestSent ? 'Request Already Sent' : 'Request to Borrow'}
+                    </button>
+                    <ChatButton currentUser={user} otherUserId={book.lender_id} otherUserName={lenderDisplayName} />
                 </>
             )}
-            {!user && (
-                 <div className="w-full bg-gray-100 text-gray-700 text-center p-4 rounded-lg">
-                    <p>Please <Link to="/login" className="text-green-600 font-bold hover:underline">log in</Link> to interact with this book.</p>
-                 </div>
-            )}
+            {!user && (<div className="w-full bg-gray-100 text-gray-700 text-center p-4 rounded-lg"><p>Please <Link to="/login" className="text-green-600 font-bold hover:underline">log in</Link> to request or chat about this book.</p></div>)}
           </div>
         </div>
       </div>

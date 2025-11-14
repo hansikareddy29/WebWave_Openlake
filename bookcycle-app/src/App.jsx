@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { supabase } from './supabase';
-
-// --- Layout Components ---
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-
-// --- Page Components ---
 import Home from './pages/Home';
 import Login from './pages/Login';
 import AddBook from './pages/AddBook';
 import MyBooks from './pages/MyBooks';
-import BookDetails from './pages/BookDetails'; 
+import BookDetails from './pages/BookDetails';
 import Profile from './pages/Profile';
 import Requests from './pages/Requests';
 import Chat from './pages/Chat';
@@ -22,14 +18,20 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-        setUser(session?.user ?? null);
-        setLoading(false);
-    });
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+      setLoading(false);
+    };
+    getSession();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
-    return () => subscription.unsubscribe();
+
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, []);
 
   if (loading) {
@@ -37,7 +39,9 @@ function App() {
   }
 
   const ProtectedRoute = ({ children }) => {
-    if (!user) { return <Navigate to="/login" />; }
+    if (!user) {
+      return <Navigate to="/login" />;
+    }
     return children;
   };
 
@@ -49,9 +53,7 @@ function App() {
           <Route path="/" element={<Home user={user} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/auth" element={<Authentication />} />
-          
           <Route path="/book/:bookId" element={<BookDetails user={user} />} />
-          
           <Route path="/add-book" element={<ProtectedRoute><AddBook user={user} /></ProtectedRoute>} />
           <Route path="/my-books" element={<ProtectedRoute><MyBooks user={user} /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile user={user} /></ProtectedRoute>} />
